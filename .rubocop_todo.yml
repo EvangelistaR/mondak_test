@@ -78,6 +78,9 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 9
 
+RSpec/NestedGroups:
+  Enabled: false
+
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/BlockComments:

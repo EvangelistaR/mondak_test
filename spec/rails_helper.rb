@@ -1,5 +1,8 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
+require 'simplecov'
+SimpleCov.start
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
@@ -62,4 +65,15 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include ActiveSupport::Testing::TimeHelpers
+
+  config.before do
+    ActiveJob::Base.queue_adapter.enqueued_jobs.clear # make sure we're dealing with fresh queues before each test
+  end
+
+  config.around(:each, :active_job) do |example|
+    previous_adapter = ActiveJob::Base.queue_adapter
+    ActiveJob::Base.queue_adapter = example.metadata[:active_job]
+    example.call
+    ActiveJob::Base.queue_adapter = previous_adapter
+  end
 end
